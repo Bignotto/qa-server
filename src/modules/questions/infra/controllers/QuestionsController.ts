@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-//import { container } from 'tsyringe';
+import { container } from "tsyringe";
 
-//import CreateAppointmentService from '@modules/appointments/services/CreateAppointmentService';
+import CreateQuestionService from "../../services/CreateQuestionService";
 
 export default class QuestionsController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -10,7 +10,8 @@ export default class QuestionsController {
     //need this when not using celebrate
     //const parsedDate = parseISO(date);
 
-    //const createAppointment = container.resolve(CreateAppointmentService);
+    const createQuestion = container.resolve(CreateQuestionService);
+    const question = await createQuestion.execute({ user_id, text });
 
     // const appointment = await createAppointment.execute({
     //     date,
@@ -18,6 +19,6 @@ export default class QuestionsController {
     //     user_id,
     // });
 
-    return response.json({ text, user_id });
+    return response.json(question);
   }
 }
