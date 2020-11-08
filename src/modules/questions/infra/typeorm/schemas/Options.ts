@@ -6,18 +6,14 @@ import {
   Column,
   ObjectIdColumn,
 } from "typeorm";
-import Option from "./Options";
 
-@Entity("questions")
-class Question {
+@Entity("options")
+class Option {
   @ObjectIdColumn()
   id: ObjectID;
 
   @Column()
   text: string;
-
-  @Column("uuid")
-  user_id: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -25,8 +21,9 @@ class Question {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Column(type => Option)
-  options: Option[];
+  constructor(text: string) {
+    this.text = text;
+  }
 }
 
-export default Question;
+export default Option;
