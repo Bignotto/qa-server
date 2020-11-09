@@ -5,10 +5,15 @@ import CreateQuestionService from "../../services/CreateQuestionService";
 
 export default class QuestionsController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { text, user_id, option_1, option_2 } = request.body;
-
-    //need this when not using celebrate
-    //const parsedDate = parseISO(date);
+    const {
+      text,
+      user_id,
+      option_1,
+      option_2,
+      option_3,
+      option_4,
+      option_5,
+    } = request.body;
 
     const createQuestion = container.resolve(CreateQuestionService);
     const question = await createQuestion.execute({
@@ -16,13 +21,10 @@ export default class QuestionsController {
       text,
       option_1,
       option_2,
+      option_3,
+      option_4,
+      option_5,
     });
-
-    // const appointment = await createAppointment.execute({
-    //     date,
-    //     provider_id,
-    //     user_id,
-    // });
 
     return response.json(question);
   }
