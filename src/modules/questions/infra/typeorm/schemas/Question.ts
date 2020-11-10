@@ -14,6 +14,9 @@ class Question {
   id: ObjectID;
 
   @Column()
+  easy_id: string;
+
+  @Column()
   text: string;
 
   @Column("uuid")
