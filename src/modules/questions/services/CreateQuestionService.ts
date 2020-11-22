@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import Option from "../infra/typeorm/schemas/Options";
 import Question from "../infra/typeorm/schemas/Question";
+import IEasyCodeProvider from "../providers/EasyCodeProvider/models/IEasyCodeProvider";
 import IQuestionsRepository from "../repositories/IQuestionsRepository";
 
 interface IRequest {
@@ -17,7 +18,10 @@ interface IRequest {
 class CreateQuestionService {
   constructor(
     @inject("QuestionsRepository")
-    private questionsRepository: IQuestionsRepository
+    private questionsRepository: IQuestionsRepository,
+
+    @inject("EasyCodeProvider")
+    private easyCodeProvider: IEasyCodeProvider
   ) {}
 
   public async execute({
