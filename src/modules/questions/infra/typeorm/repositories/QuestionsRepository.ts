@@ -26,6 +26,8 @@ class QuestionsRepository implements IQuestionsRepository {
     await this.ormRepository.save(question);
     return question;
   }
+
+  public async answer(question_id: string): Promise<void> {}
 }
 
 export default QuestionsRepository;

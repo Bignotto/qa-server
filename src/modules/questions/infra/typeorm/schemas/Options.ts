@@ -7,6 +7,8 @@ import {
   ObjectIdColumn,
 } from "typeorm";
 
+import Answer from "./Answers";
+
 @Entity("options")
 class Option {
   @ObjectIdColumn()
@@ -20,6 +22,9 @@ class Option {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column(type => Answer)
+  answers: Answer[];
 
   constructor(text: string) {
     this.text = text;

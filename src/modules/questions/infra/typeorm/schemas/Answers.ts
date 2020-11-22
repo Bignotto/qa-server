@@ -13,9 +13,6 @@ class Answers {
   id: ObjectID;
 
   @Column()
-  text: string;
-
-  @Column()
   user_id: string;
 
   @CreateDateColumn()
