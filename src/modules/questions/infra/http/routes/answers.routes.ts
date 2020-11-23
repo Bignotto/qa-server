@@ -1,17 +1,17 @@
 import { Router, Request, Response, request, response } from "express";
 
-import QuestionsController from "../../controllers/QuestionsController";
+import AnswersController from "../../controllers/AnswersController";
 
 const answersRouter = Router();
-const questionsController = new QuestionsController();
+const answersController = new AnswersController();
 
 answersRouter.get("/", (request, response) => {
   response.json({
     message: "Deu certo!",
-    sec: "rota questions - get",
+    sec: "rota answers - get",
   });
 });
 
-answersRouter.post("/", questionsController.create);
+answersRouter.post("/", answersController.create);
 
 export default answersRouter;

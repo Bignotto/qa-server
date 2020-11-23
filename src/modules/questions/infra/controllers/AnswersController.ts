@@ -8,11 +8,11 @@ export default class QuestionsController {
     const { user_id, question_id } = request.body;
 
     const createQuestion = container.resolve(CreateQuestionService);
-    const question = await createQuestion.execute({
+
+    return response.json({
+      message: "answer controller",
       user_id,
       question_id,
     });
-
-    return response.json(question);
   }
 }

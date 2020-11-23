@@ -11,6 +11,12 @@ interface IRequest {
   question_id: string;
 }
 
+/*
+[ ] 30 min time limit;
+[ ] valid question id;
+[ ] check if user already answered 
+*/
+
 @injectable()
 class CreateQuestionService {
   constructor(
@@ -18,11 +24,7 @@ class CreateQuestionService {
     private questionsRepository: IQuestionsRepository
   ) {}
 
-  public async execute({ user_id }: IRequest): Promise<Question> {
-    const options = new Array<Option>();
-
-    return question;
-  }
+  public async execute({ user_id, question_id }: IRequest): Promise<Question> {}
 }
 
 export default CreateQuestionService;
