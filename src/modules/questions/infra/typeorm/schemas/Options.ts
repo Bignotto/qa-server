@@ -11,8 +11,8 @@ import Answer from "./Answers";
 
 @Entity("options")
 class Option {
-  @ObjectIdColumn()
-  id: ObjectID;
+  @Column()
+  id: number;
 
   @Column()
   text: string;
@@ -26,9 +26,9 @@ class Option {
   @Column(type => Answer)
   answers: Answer[];
 
-  constructor(text: string) {
-    this.text = text;
-  }
+  // constructor(text: string) {
+  //   this.text = text;
+  // }
 }
 
 export default Option;

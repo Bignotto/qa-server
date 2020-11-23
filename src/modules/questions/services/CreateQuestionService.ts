@@ -35,11 +35,18 @@ class CreateQuestionService {
   }: IRequest): Promise<Question> {
     const options = new Array<Option>();
 
-    if (option_1) options.push(new Option(option_1));
-    if (option_2) options.push(new Option(option_2));
-    if (option_3) options.push(new Option(option_3));
-    if (option_4) options.push(new Option(option_4));
-    if (option_5) options.push(new Option(option_5));
+    if (option_1)
+      options.push(await this.questionsRepository.createOption(option_1, 1));
+    if (option_2)
+      options.push(await this.questionsRepository.createOption(option_2, 2));
+    if (option_3)
+      options.push(await this.questionsRepository.createOption(option_3, 3));
+    if (option_4)
+      options.push(await this.questionsRepository.createOption(option_4, 4));
+    if (option_5)
+      options.push(await this.questionsRepository.createOption(option_5, 5));
+
+    console.log(this.easyCodeProvider.generateCode("qqq"));
 
     const question = await this.questionsRepository.create({
       user_id,

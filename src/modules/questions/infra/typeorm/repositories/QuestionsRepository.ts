@@ -4,12 +4,15 @@ import IQuestionsRepository from "@modules/questions/repositories/IQuestionsRepo
 import ICreateQuestionDTO from "@modules/questions/dtos/ICreateQuestionDTO";
 
 import Question from "../schemas/Question";
+import Option from "../schemas/Options";
 
 class QuestionsRepository implements IQuestionsRepository {
-  private ormRepository: MongoRepository<Question>;
+  private questionsOrmRepository: MongoRepository<Question>;
+  private optionsOrmRepository: MongoRepository<Option>;
 
   constructor() {
-    this.ormRepository = getMongoRepository(Question, "mongo");
+    this.questionsOrmRepository = getMongoRepository(Question, "mongo");
+    this.optionsOrmRepository = getMongoRepository(Option, "mongo");
   }
 
   public async create({
@@ -17,17 +20,22 @@ class QuestionsRepository implements IQuestionsRepository {
     text,
     options,
   }: ICreateQuestionDTO): Promise<Question> {
-    const question = this.ormRepository.create({
+    const question = this.questionsOrmRepository.create({
       text,
       user_id,
     });
     question.options = options;
 
-    await this.ormRepository.save(question);
+    await this.questionsOrmRepository.save(question);
     return question;
   }
 
   public async answer(question_id: string): Promise<void> {}
+
+  public async createOption(text: string, id: number): Promise<Option> {
+    const option = this.optionsOrmRepository.create({ text, id });
+    return option;
+  }
 }
 
 export default QuestionsRepository;
