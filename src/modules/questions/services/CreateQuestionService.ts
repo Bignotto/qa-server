@@ -33,6 +33,22 @@ class CreateQuestionService {
     option_4,
     option_5,
   }: IRequest): Promise<Question> {
+    const maxError = 3;
+    let errorCount = 0;
+
+    let easy_id = this.easyCodeProvider.generateCode("qqq");
+    let foundQuestion: Question | undefined;
+
+    while (errorCount < maxError) {
+      foundQuestion = await this.questionsRepository.findByEasyCode(easy_id);
+      if (foundQuestion) {
+        errorCount += 1;
+        easy_id = this.easyCodeProvider.generateCode("qqq");
+      } else break;
+    }
+
+    if (errorCount === maxError) throw new Error("EasyCode full!");
+
     const options = new Array<Option>();
 
     if (option_1)
@@ -46,11 +62,10 @@ class CreateQuestionService {
     if (option_5)
       options.push(await this.questionsRepository.createOption(option_5, 5));
 
-    console.log(this.easyCodeProvider.generateCode("qqq"));
-
     const question = await this.questionsRepository.create({
-      user_id,
       text,
+      user_id,
+      easy_id,
       options,
     });
     return question;

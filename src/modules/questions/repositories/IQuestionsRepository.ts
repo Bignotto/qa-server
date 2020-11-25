@@ -7,4 +7,5 @@ export default interface IQuestionsRepository {
   answer(question_id: string): Promise<void>;
 
   createOption(text: string, id: number): Promise<Option>;
+  findByEasyCode(easy_id: string): Promise<Question | undefined>;
 }

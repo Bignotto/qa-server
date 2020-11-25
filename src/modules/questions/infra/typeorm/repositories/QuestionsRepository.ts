@@ -16,13 +16,15 @@ class QuestionsRepository implements IQuestionsRepository {
   }
 
   public async create({
-    user_id,
     text,
+    user_id,
+    easy_id,
     options,
   }: ICreateQuestionDTO): Promise<Question> {
     const question = this.questionsOrmRepository.create({
       text,
       user_id,
+      easy_id,
     });
     question.options = options;
 
@@ -35,6 +37,11 @@ class QuestionsRepository implements IQuestionsRepository {
   public async createOption(text: string, id: number): Promise<Option> {
     const option = this.optionsOrmRepository.create({ text, id });
     return option;
+  }
+
+  public async findByEasyCode(easy_id: string): Promise<Question | undefined> {
+    const question = await this.questionsOrmRepository.findOne({ easy_id });
+    return question;
   }
 }
 

@@ -13,7 +13,7 @@ class Question {
   @ObjectIdColumn()
   id: ObjectID;
 
-  @Column()
+  @Column({ unique: true })
   easy_id: string;
 
   @Column()
