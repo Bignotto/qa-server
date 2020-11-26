@@ -33,7 +33,11 @@ class FakeQuestionsRepository implements IQuestionsRepository {
   }
 
   public async createOption(text: string, id: number): Promise<Option> {
-    throw new Error("Method not implemented.");
+    const option = new Option();
+
+    Object.assign(option, { text, id });
+
+    return option;
   }
 }
 
