@@ -41,12 +41,13 @@ class CreateQuestionService {
 
     while (errorCount < maxError) {
       foundQuestion = await this.questionsRepository.findByEasyCode(easy_id);
-      if (foundQuestion) {
-        errorCount += 1;
+      if (foundQuestion !== undefined) {
+        errorCount++;
         easy_id = this.easyCodeProvider.generateCode("qqq");
       } else break;
     }
 
+    console.log(easy_id);
     if (errorCount === maxError) throw new Error("EasyCode full!");
 
     const options = new Array<Option>();

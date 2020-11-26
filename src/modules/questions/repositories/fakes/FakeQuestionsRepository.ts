@@ -8,22 +8,23 @@ class FakeQuestionsRepository implements IQuestionsRepository {
   private questions: Question[] = [];
 
   public async create({
-    user_id,
     text,
+    user_id,
+    easy_id,
     options,
   }: ICreateQuestionDTO): Promise<Question> {
     const question = new Question();
 
-    Object.assign(question, { text, user_id, options, easy_id: "000001" });
+    Object.assign(question, { text, user_id, options, easy_id });
 
     this.questions.push(question);
     return question;
   }
 
   public async findByEasyCode(id: string): Promise<Question | undefined> {
-    const findQuestion = this.questions.find(question => {
-      question.easy_id === id;
-    });
+    const findQuestion = this.questions.find(
+      question => question.easy_id === id
+    );
 
     return findQuestion;
   }
