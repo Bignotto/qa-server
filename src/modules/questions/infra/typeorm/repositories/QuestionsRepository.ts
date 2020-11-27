@@ -5,14 +5,17 @@ import ICreateQuestionDTO from "@modules/questions/dtos/ICreateQuestionDTO";
 
 import Question from "../schemas/Question";
 import Option from "../schemas/Options";
+import Answers from "../schemas/Answers";
 
 class QuestionsRepository implements IQuestionsRepository {
   private questionsOrmRepository: MongoRepository<Question>;
   private optionsOrmRepository: MongoRepository<Option>;
+  private answerOrmRepository: MongoRepository<Answers>;
 
   constructor() {
     this.questionsOrmRepository = getMongoRepository(Question, "mongo");
     this.optionsOrmRepository = getMongoRepository(Option, "mongo");
+    this.answerOrmRepository = getMongoRepository(Answers, "mongo");
   }
 
   public async create({
@@ -32,7 +35,29 @@ class QuestionsRepository implements IQuestionsRepository {
     return question;
   }
 
-  public async answer(question_id: string): Promise<void> {}
+  public async answer(
+    question_id: string,
+    option_id: number,
+    user_id: string
+  ): Promise<Question> {
+    const question = await this.findByEasyCode(question_id);
+    if (!question) throw new Error("Answer: question not found to answer.");
+
+    const answer = this.answerOrmRepository.create({ user_id });
+
+    const optionIndex = question.options.findIndex(opt => opt.id === option_id);
+
+    if (!question.options[optionIndex].answers)
+      question.options[optionIndex].answers = [];
+
+    question.options[optionIndex].answers.push(answer);
+
+    const answeredQuestion = await this.questionsOrmRepository.update(
+      question.id,
+      question
+    );
+    return question;
+  }
 
   public async createOption(text: string, id: number): Promise<Option> {
     const option = this.optionsOrmRepository.create({ text, id });

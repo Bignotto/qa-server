@@ -47,7 +47,6 @@ class CreateQuestionService {
       } else break;
     }
 
-    console.log(easy_id);
     if (errorCount === maxError) throw new Error("EasyCode full!");
 
     const options = new Array<Option>();
