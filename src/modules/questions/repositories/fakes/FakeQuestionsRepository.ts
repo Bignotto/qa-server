@@ -29,7 +29,11 @@ class FakeQuestionsRepository implements IQuestionsRepository {
     return findQuestion;
   }
 
-  public async answer(question_id: string): Promise<void> {
+  public async answer(
+    question_id: string,
+    option_id: number,
+    user_id: string
+  ): Promise<Question> {
     throw new Error("Method not implemented.");
   }
 
