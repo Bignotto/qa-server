@@ -33,21 +33,23 @@ class CreateQuestionService {
     option_4,
     option_5,
   }: IRequest): Promise<Question> {
-    const maxError = 3;
-    let errorCount = 0;
+    //this block must go to easy code provider logic!
+    // const maxError = 3;
+    // let errorCount = 0;
 
-    let easy_id = this.easyCodeProvider.generateCode("qqq");
-    let foundQuestion: Question | undefined;
+    let easy_id = await this.easyCodeProvider.generateCode("qqq");
+    // let foundQuestion: Question | undefined;
 
-    while (errorCount < maxError) {
-      foundQuestion = await this.questionsRepository.findByEasyCode(easy_id);
-      if (foundQuestion !== undefined) {
-        errorCount++;
-        easy_id = this.easyCodeProvider.generateCode("qqq");
-      } else break;
-    }
+    // while (errorCount < maxError) {
+    //   foundQuestion = await this.questionsRepository.findByEasyCode(easy_id);
+    //   if (foundQuestion !== undefined) {
+    //     errorCount++;
+    //     easy_id = this.easyCodeProvider.generateCode("qqq");
+    //   } else break;
+    // }
 
-    if (errorCount === maxError) throw new Error("EasyCode full!");
+    // if (errorCount === maxError) throw new Error("EasyCode full!");
+    //--
 
     const options = new Array<Option>();
 

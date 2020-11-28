@@ -35,7 +35,7 @@ describe("CreateQuestion", () => {
   it("should not be able to use same easy code twice", async () => {
     jest
       .spyOn(fakeEasyCodeProvider, "generateCode")
-      .mockImplementation(() => "00000");
+      .mockImplementation(async () => Promise.resolve("00000"));
 
     await createQuestionService.execute({
       user_id: "dunha",

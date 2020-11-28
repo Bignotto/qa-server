@@ -1,3 +1,3 @@
 export default interface IEasyCodeProvider {
-  generateCode(payload: string): string;
+  generateCode(payload: string): Promise<string>;
 }
