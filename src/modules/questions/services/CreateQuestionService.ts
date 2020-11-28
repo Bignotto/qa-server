@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import Option from "../infra/typeorm/schemas/Options";
 import Question from "../infra/typeorm/schemas/Question";
+import IEasyCodeProvider from "../providers/EasyCodeProvider/models/IEasyCodeProvider";
 import IQuestionsRepository from "../repositories/IQuestionsRepository";
 
 interface IRequest {
@@ -17,7 +18,10 @@ interface IRequest {
 class CreateQuestionService {
   constructor(
     @inject("QuestionsRepository")
-    private questionsRepository: IQuestionsRepository
+    private questionsRepository: IQuestionsRepository,
+
+    @inject("EasyCodeProvider")
+    private easyCodeProvider: IEasyCodeProvider
   ) {}
 
   public async execute({
@@ -29,17 +33,39 @@ class CreateQuestionService {
     option_4,
     option_5,
   }: IRequest): Promise<Question> {
+    const maxError = 3;
+    let errorCount = 0;
+
+    let easy_id = this.easyCodeProvider.generateCode("qqq");
+    let foundQuestion: Question | undefined;
+
+    while (errorCount < maxError) {
+      foundQuestion = await this.questionsRepository.findByEasyCode(easy_id);
+      if (foundQuestion !== undefined) {
+        errorCount++;
+        easy_id = this.easyCodeProvider.generateCode("qqq");
+      } else break;
+    }
+
+    if (errorCount === maxError) throw new Error("EasyCode full!");
+
     const options = new Array<Option>();
 
-    if (option_1) options.push(new Option(option_1));
-    if (option_2) options.push(new Option(option_2));
-    if (option_3) options.push(new Option(option_3));
-    if (option_4) options.push(new Option(option_4));
-    if (option_5) options.push(new Option(option_5));
+    if (option_1)
+      options.push(await this.questionsRepository.createOption(option_1, 1));
+    if (option_2)
+      options.push(await this.questionsRepository.createOption(option_2, 2));
+    if (option_3)
+      options.push(await this.questionsRepository.createOption(option_3, 3));
+    if (option_4)
+      options.push(await this.questionsRepository.createOption(option_4, 4));
+    if (option_5)
+      options.push(await this.questionsRepository.createOption(option_5, 5));
 
     const question = await this.questionsRepository.create({
-      user_id,
       text,
+      user_id,
+      easy_id,
       options,
     });
     return question;

@@ -13,6 +13,9 @@ class Question {
   @ObjectIdColumn()
   id: ObjectID;
 
+  @Column({ unique: true })
+  easy_id: string;
+
   @Column()
   text: string;
 
