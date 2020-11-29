@@ -33,7 +33,10 @@ class CreateQuestionService {
     */
 
     const question = await this.questionsRepository.findByEasyCode(question_id);
-    if (!question) throw new Error("Answer: cant answer unexistent question.");
+    if (!question)
+      throw new Error(
+        "AnswerQuestionService: cant answer unexistent question."
+      );
 
     // const onTime = question.created_at;
     // const now = new Date(Date.now());
