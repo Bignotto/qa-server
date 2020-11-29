@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { differenceInMinutes } from "date-fns";
 
 import Option from "../infra/typeorm/schemas/Options";
 import Question from "../infra/typeorm/schemas/Question";
@@ -27,8 +28,8 @@ class CreateQuestionService {
     option_id,
   }: IRequest): Promise<Question> {
     /*
-    [ ] 30 min time limit;
-    [ ] valid question id;
+    [x] 30 min time limit;
+    [x] valid question id;
     [ ] check if user already answered 
     */
 
@@ -38,8 +39,9 @@ class CreateQuestionService {
         "AnswerQuestionService: cant answer unexistent question."
       );
 
-    // const onTime = question.created_at;
-    // const now = new Date(Date.now());
+    const timeDifference = differenceInMinutes(Date.now(), question.created_at);
+    if (timeDifference >= 30)
+      throw new Error("AnswerQuestionService: question expired.");
 
     const answeredQuestion = await this.questionsRepository.answer(
       question_id,

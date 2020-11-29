@@ -16,7 +16,13 @@ class FakeQuestionsRepository implements IQuestionsRepository {
   }: ICreateQuestionDTO): Promise<Question> {
     const question = new Question();
 
-    Object.assign(question, { text, user_id, options, easy_id });
+    Object.assign(question, {
+      text,
+      user_id,
+      options,
+      easy_id,
+      created_at: Date.now(),
+    });
 
     this.questions.push(question);
     return question;

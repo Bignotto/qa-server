@@ -40,67 +40,41 @@ describe("AnswerQuestion", () => {
     expect(answeredQuestion.options[3]).toHaveProperty("answers");
   });
 
-  //   it("should not be able to use same easy code twice", async () => {
-  //     jest
-  //       .spyOn(fakeEasyCodeProvider, "generateCode")
-  //       .mockImplementation(() => "00000");
+  it("should not be able to answer an invalid question id", async () => {
+    await expect(
+      answerQuestionService.execute({
+        user_id: "dunha",
+        question_id: "xxxxx",
+        option_id: 4,
+      })
+    ).rejects.toBeInstanceOf(Error);
+  });
 
-  //     await createQuestionService.execute({
-  //       user_id: "dunha",
-  //       text: "esta é uma pergunta teste",
-  //       option_1: "primeira",
-  //       option_2: "segunda",
-  //       option_3: "terceira",
-  //       option_4: "quarta",
-  //       option_5: "quinta",
-  //     });
+  it("should not be able to answer an expired question", async () => {
+    jest.spyOn(Date, "now").mockImplementationOnce(() => {
+      return new Date(2020, 10, 28, 17, 30).getTime();
+    });
 
-  //     await expect(
-  //       createQuestionService.execute({
-  //         user_id: "dunha",
-  //         text: "esta é uma pergunta teste",
-  //         option_1: "primeira",
-  //         option_2: "segunda",
-  //         option_3: "terceira",
-  //         option_4: "quarta",
-  //         option_5: "quinta",
-  //       })
-  //     ).rejects.toBeInstanceOf(Error);
-  //   });
+    const question = await createQuestionService.execute({
+      user_id: "dunha",
+      text: "esta é uma pergunta teste",
+      option_1: "primeira",
+      option_2: "segunda",
+      option_3: "terceira",
+      option_4: "quarta",
+      option_5: "quinta",
+    });
 
-  //   it("should not be able to create a question with only one option", async () => {
-  //     await expect(
-  //       createQuestionService.execute({
-  //         user_id: "dunha",
-  //         text: "esta é uma pergunta teste",
-  //         option_1: "primeira",
-  //       })
-  //     ).rejects.toBeInstanceOf(Error);
-  //   });
+    jest.spyOn(Date, "now").mockImplementationOnce(() => {
+      return new Date(2020, 10, 28, 18).getTime();
+    });
 
-  //   it("should not be able to create a question without user_id", async () => {
-  //     await expect(
-  //       createQuestionService.execute({
-  //         text: "esta é uma pergunta teste",
-  //         option_1: "primeira",
-  //         option_2: "segunda",
-  //         option_3: "terceira",
-  //         option_4: "quarta",
-  //         option_5: "quinta",
-  //       })
-  //     ).rejects.toBeInstanceOf(Error);
-  //   });
-
-  //   it("should not be able to create a question without text", async () => {
-  //     await expect(
-  //       createQuestionService.execute({
-  //         user_id: "dunha",
-  //         option_1: "primeira",
-  //         option_2: "segunda",
-  //         option_3: "terceira",
-  //         option_4: "quarta",
-  //         option_5: "quinta",
-  //       })
-  //     ).rejects.toBeInstanceOf(Error);
-  //   });
+    await expect(
+      answerQuestionService.execute({
+        user_id: "dunha",
+        question_id: question.easy_id,
+        option_id: 4,
+      })
+    ).rejects.toBeInstanceOf(Error);
+  });
 });
