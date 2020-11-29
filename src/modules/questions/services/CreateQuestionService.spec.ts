@@ -59,4 +59,40 @@ describe("CreateQuestion", () => {
       })
     ).rejects.toBeInstanceOf(Error);
   });
+
+  it("should not be able to create a question with only one option", async () => {
+    await expect(
+      createQuestionService.execute({
+        user_id: "dunha",
+        text: "esta é uma pergunta teste",
+        option_1: "primeira",
+      })
+    ).rejects.toBeInstanceOf(Error);
+  });
+
+  it("should not be able to create a question without user_id", async () => {
+    await expect(
+      createQuestionService.execute({
+        text: "esta é uma pergunta teste",
+        option_1: "primeira",
+        option_2: "segunda",
+        option_3: "terceira",
+        option_4: "quarta",
+        option_5: "quinta",
+      })
+    ).rejects.toBeInstanceOf(Error);
+  });
+
+  it("should not be able to create a question without text", async () => {
+    await expect(
+      createQuestionService.execute({
+        user_id: "dunha",
+        option_1: "primeira",
+        option_2: "segunda",
+        option_3: "terceira",
+        option_4: "quarta",
+        option_5: "quinta",
+      })
+    ).rejects.toBeInstanceOf(Error);
+  });
 });

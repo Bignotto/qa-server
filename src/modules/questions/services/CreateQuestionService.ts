@@ -5,13 +5,13 @@ import IEasyCodeProvider from "../providers/EasyCodeProvider/models/IEasyCodePro
 import IQuestionsRepository from "../repositories/IQuestionsRepository";
 
 interface IRequest {
-  user_id: string;
-  text: string;
-  option_1: string;
-  option_2: string;
-  option_3: string;
-  option_4: string;
-  option_5: string;
+  user_id?: string;
+  text?: string;
+  option_1?: string;
+  option_2?: string;
+  option_3?: string;
+  option_4?: string;
+  option_5?: string;
 }
 
 @injectable()
@@ -33,6 +33,7 @@ class CreateQuestionService {
     option_4,
     option_5,
   }: IRequest): Promise<Question> {
+    //this block must go to easy code provider logic!
     const maxError = 3;
     let errorCount = 0;
 
@@ -48,6 +49,16 @@ class CreateQuestionService {
     }
 
     if (errorCount === maxError) throw new Error("EasyCode full!");
+    //--
+
+    if (!user_id)
+      throw new Error(
+        "CreateQuestionService: cant create question without user identification."
+      );
+    if (!text)
+      throw new Error(
+        "CreateQuestionService: cant create question without a question text."
+      );
 
     const options = new Array<Option>();
 
@@ -61,6 +72,9 @@ class CreateQuestionService {
       options.push(await this.questionsRepository.createOption(option_4, 4));
     if (option_5)
       options.push(await this.questionsRepository.createOption(option_5, 5));
+
+    if (options.length < 2)
+      throw new Error("CreateQuestionService: less than 2 options");
 
     const question = await this.questionsRepository.create({
       text,
