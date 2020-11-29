@@ -4,7 +4,7 @@ import AnswerQuestionService from "./AnswerQuestionService";
 import FakeQuestionRepository from "../repositories/fakes/FakeQuestionsRepository";
 import FakeEasyCodeProvider from "../providers/EasyCodeProvider/fakes/FakeEasyCodeProvider";
 
-describe("CreateQuestion", () => {
+describe("AnswerQuestion", () => {
   let fakeRepository: FakeQuestionRepository;
   let fakeEasyCodeProvider: FakeEasyCodeProvider;
   let createQuestionService: CreateQuestionService;
@@ -31,16 +31,13 @@ describe("CreateQuestion", () => {
       option_5: "quinta",
     });
 
-    // expect(question).toHaveProperty("easy_id");
-    // expect(question.options.length).toBe(5);
-
     const answeredQuestion = await answerQuestionService.execute({
       user_id: "big",
       question_id: question.easy_id,
       option_id: 4,
     });
 
-    expect(answeredQuestion.options[3]).toHaveProperty("answer");
+    expect(answeredQuestion.options[3]).toHaveProperty("answers");
   });
 
   //   it("should not be able to use same easy code twice", async () => {

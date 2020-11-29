@@ -3,6 +3,7 @@ import ICreateQuestionDTO from "@modules/questions/dtos/ICreateQuestionDTO";
 
 import Question from "../../infra/typeorm/schemas/Question";
 import Option from "@modules/questions/infra/typeorm/schemas/Options";
+import Answers from "@modules/questions/infra/typeorm/schemas/Answers";
 
 class FakeQuestionsRepository implements IQuestionsRepository {
   private questions: Question[] = [];
@@ -34,7 +35,26 @@ class FakeQuestionsRepository implements IQuestionsRepository {
     option_id: number,
     user_id: string
   ): Promise<Question> {
-    throw new Error("Method not implemented.");
+    const questionIndex = this.questions.findIndex(
+      question => question.easy_id === question_id
+    );
+
+    if (questionIndex < 0)
+      throw new Error("FakeQuestionsRepository: question not found");
+
+    const answer = new Answers();
+    Object.assign(answer, { user_id });
+
+    const optionIndex = this.questions[questionIndex].options.findIndex(
+      opt => opt.id === option_id
+    );
+
+    if (!this.questions[questionIndex].options[optionIndex].answers)
+      this.questions[questionIndex].options[optionIndex].answers = [];
+
+    this.questions[questionIndex].options[optionIndex].answers.push(answer);
+
+    return this.questions[questionIndex];
   }
 
   public async createOption(text: string, id: number): Promise<Option> {
