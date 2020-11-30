@@ -31,6 +31,7 @@ class CreateQuestionService {
     [x] 30 min time limit;
     [x] valid question id;
     [ ] check if user already answered 
+    [ ] question cannot be answered by the user who created it
     */
 
     const question = await this.questionsRepository.findByEasyCode(question_id);
@@ -42,6 +43,14 @@ class CreateQuestionService {
     const timeDifference = differenceInMinutes(Date.now(), question.created_at);
     if (timeDifference >= 30)
       throw new Error("AnswerQuestionService: question expired.");
+
+    const foundUser = this.questionsRepository.findUserAnswer(
+      question_id,
+      user_id
+    );
+
+    if (foundUser)
+      throw new Error("AnswerQuestionService: user already answered it.");
 
     const answeredQuestion = await this.questionsRepository.answer(
       question_id,

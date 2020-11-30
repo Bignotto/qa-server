@@ -60,6 +60,7 @@ class FakeQuestionsRepository implements IQuestionsRepository {
 
     this.questions[questionIndex].options[optionIndex].answers.push(answer);
 
+    console.log(this.questions[questionIndex].options);
     return this.questions[questionIndex];
   }
 
@@ -69,6 +70,27 @@ class FakeQuestionsRepository implements IQuestionsRepository {
     Object.assign(option, { text, id });
 
     return option;
+  }
+
+  public async findUserAnswer(
+    easy_id: string,
+    user_id: string
+  ): Promise<Answers | undefined> {
+    const foundQuestion = this.questions.find(
+      question => question.easy_id === easy_id
+    );
+    if (!foundQuestion)
+      throw new Error("FakeQuestionsRepository: question not found");
+
+    let userAnswer: Answers | undefined;
+
+    foundQuestion.options.forEach(opt => {
+      if (opt.answers) {
+        userAnswer = opt.answers.find(ans => ans.user_id === user_id);
+      }
+    });
+
+    return userAnswer;
   }
 }
 
