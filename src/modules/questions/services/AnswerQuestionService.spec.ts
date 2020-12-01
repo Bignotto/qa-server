@@ -40,6 +40,42 @@ describe("AnswerQuestion", () => {
     expect(answeredQuestion.options[3]).toHaveProperty("answers");
   });
 
+  it("a question can get multiple answers", async () => {
+    const question = await createQuestionService.execute({
+      user_id: "dunha",
+      text: "esta é uma pergunta teste",
+      option_1: "primeira",
+      option_2: "segunda",
+      option_3: "terceira",
+      option_4: "quarta",
+      option_5: "quinta",
+    });
+
+    const answeredQuestion = await answerQuestionService.execute({
+      user_id: "big",
+      question_id: question.easy_id,
+      option_id: 4,
+    });
+
+    expect(answeredQuestion.options[3]).toHaveProperty("answers");
+
+    const answeredQuestion2 = await answerQuestionService.execute({
+      user_id: "bigbig",
+      question_id: question.easy_id,
+      option_id: 3,
+    });
+
+    expect(answeredQuestion2.options[2]).toHaveProperty("answers");
+
+    const answeredQuestion3 = await answerQuestionService.execute({
+      user_id: "bigbigbig",
+      question_id: question.easy_id,
+      option_id: 3,
+    });
+
+    expect(answeredQuestion3.options[2].answers.length).toBeGreaterThan(1);
+  });
+
   it("should not be able to answer an invalid question id", async () => {
     await expect(
       answerQuestionService.execute({
