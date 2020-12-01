@@ -5,12 +5,7 @@ import QuestionsController from "../../controllers/QuestionsController";
 const questionsRouter = Router();
 const questionsController = new QuestionsController();
 
-questionsRouter.get("/", (request, response) => {
-  response.json({
-    message: "Deu certo!",
-    sec: "rota questions - get",
-  });
-});
+questionsRouter.get("/:easy_id", questionsController.show);
 
 questionsRouter.post("/", questionsController.create);
 

@@ -28,4 +28,13 @@ export default class QuestionsController {
 
     return response.json(question);
   }
+
+  public async show(request: Request, response: Response): Promise<Response> {
+    const { easy_id } = request.params;
+    return response.json({
+      status: "ok",
+      message: "question controller show",
+      content: easy_id,
+    });
+  }
 }
