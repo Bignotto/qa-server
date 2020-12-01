@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { differenceInMinutes } from "date-fns";
 
 import Option from "../infra/typeorm/schemas/Options";
 import Question from "../infra/typeorm/schemas/Question";
@@ -27,16 +28,36 @@ class CreateQuestionService {
     option_id,
   }: IRequest): Promise<Question> {
     /*
-    [ ] 30 min time limit;
-    [ ] valid question id;
-    [ ] check if user already answered 
+    [x] 30 min time limit;
+    [x] valid question id;
+    [x] question cannot be answered by the user who created it
+    [x] check if user already answered 
     */
 
     const question = await this.questionsRepository.findByEasyCode(question_id);
-    if (!question) throw new Error("Answer: cant answer unexistent question.");
+    if (!question)
+      throw new Error(
+        "AnswerQuestionService: cant answer unexistent question."
+      );
 
-    // const onTime = question.created_at;
-    // const now = new Date(Date.now());
+    const timeDifference = differenceInMinutes(Date.now(), question.created_at);
+    if (timeDifference >= 30)
+      throw new Error("AnswerQuestionService: question expired.");
+
+    if (user_id === question.user_id)
+      throw new Error(
+        "AnswerQuestionService: author cant answer the question."
+      );
+
+    const foundUser = await this.questionsRepository.findUserAnswer(
+      question_id,
+      user_id
+    );
+
+    if (foundUser !== undefined)
+      throw new Error(
+        `AnswerQuestionService: user already answered this question. ${foundUser}`
+      );
 
     const answeredQuestion = await this.questionsRepository.answer(
       question_id,

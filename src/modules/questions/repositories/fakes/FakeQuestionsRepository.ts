@@ -3,6 +3,7 @@ import ICreateQuestionDTO from "@modules/questions/dtos/ICreateQuestionDTO";
 
 import Question from "../../infra/typeorm/schemas/Question";
 import Option from "@modules/questions/infra/typeorm/schemas/Options";
+import Answers from "@modules/questions/infra/typeorm/schemas/Answers";
 
 class FakeQuestionsRepository implements IQuestionsRepository {
   private questions: Question[] = [];
@@ -15,7 +16,13 @@ class FakeQuestionsRepository implements IQuestionsRepository {
   }: ICreateQuestionDTO): Promise<Question> {
     const question = new Question();
 
-    Object.assign(question, { text, user_id, options, easy_id });
+    Object.assign(question, {
+      text,
+      user_id,
+      options,
+      easy_id,
+      created_at: Date.now(),
+    });
 
     this.questions.push(question);
     return question;
@@ -34,7 +41,26 @@ class FakeQuestionsRepository implements IQuestionsRepository {
     option_id: number,
     user_id: string
   ): Promise<Question> {
-    throw new Error("Method not implemented.");
+    const questionIndex = this.questions.findIndex(
+      question => question.easy_id === question_id
+    );
+
+    if (questionIndex < 0)
+      throw new Error("FakeQuestionsRepository: question not found");
+
+    const answer = new Answers();
+    Object.assign(answer, { user_id });
+
+    const optionIndex = this.questions[questionIndex].options.findIndex(
+      opt => opt.id === option_id
+    );
+
+    if (!this.questions[questionIndex].options[optionIndex].answers)
+      this.questions[questionIndex].options[optionIndex].answers = [];
+
+    this.questions[questionIndex].options[optionIndex].answers.push(answer);
+
+    return this.questions[questionIndex];
   }
 
   public async createOption(text: string, id: number): Promise<Option> {
@@ -43,6 +69,27 @@ class FakeQuestionsRepository implements IQuestionsRepository {
     Object.assign(option, { text, id });
 
     return option;
+  }
+
+  public async findUserAnswer(
+    easy_id: string,
+    user_id: string
+  ): Promise<Answers | undefined> {
+    const foundQuestion = this.questions.find(
+      question => question.easy_id === easy_id
+    );
+    if (!foundQuestion)
+      throw new Error("FakeQuestionsRepository: question not found");
+
+    let userAnswer: Answers | undefined;
+
+    foundQuestion.options.forEach(opt => {
+      if (opt.answers) {
+        userAnswer = opt.answers.find(ans => ans.user_id === user_id);
+      }
+    });
+
+    return userAnswer;
   }
 }
 
