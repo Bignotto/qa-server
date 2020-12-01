@@ -60,7 +60,6 @@ class FakeQuestionsRepository implements IQuestionsRepository {
 
     this.questions[questionIndex].options[optionIndex].answers.push(answer);
 
-    console.log(this.questions[questionIndex].options);
     return this.questions[questionIndex];
   }
 

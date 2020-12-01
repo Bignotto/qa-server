@@ -106,7 +106,6 @@ describe("AnswerQuestion", () => {
     ).rejects.toBeInstanceOf(Error);
   });
 
-  //TODO: the user who created the question cannot answer it
   it("the user who created the question cannot answer it", async () => {
     const question = await createQuestionService.execute({
       user_id: "dunha",
