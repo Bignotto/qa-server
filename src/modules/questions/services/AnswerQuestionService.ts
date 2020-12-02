@@ -1,13 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { differenceInMinutes } from "date-fns";
 
-import Option from "../infra/typeorm/schemas/Options";
 import Question from "../infra/typeorm/schemas/Question";
-import Answer from "../infra/typeorm/schemas/Answers";
 
 import IQuestionsRepository from "../repositories/IQuestionsRepository";
-import { response } from "express";
-import answersRouter from "../infra/http/routes/answers.routes";
+
+import AppError from "../../../shared/errors/AppError";
 
 interface IRequest {
   user_id: string;
@@ -27,26 +25,19 @@ class CreateQuestionService {
     question_id,
     option_id,
   }: IRequest): Promise<Question> {
-    /*
-    [x] 30 min time limit;
-    [x] valid question id;
-    [x] question cannot be answered by the user who created it
-    [x] check if user already answered 
-    */
-
     const question = await this.questionsRepository.findByEasyCode(question_id);
     if (!question)
-      throw new Error(
-        "AnswerQuestionService: cant answer unexistent question."
-      );
+      throw new AppError("Question not found.", 400, "AnswerQuestionService");
 
     const timeDifference = differenceInMinutes(Date.now(), question.created_at);
     if (timeDifference >= 30)
-      throw new Error("AnswerQuestionService: question expired.");
+      throw new AppError("Question expired.", 400, "AnswerQuestionService");
 
     if (user_id === question.user_id)
-      throw new Error(
-        "AnswerQuestionService: author cant answer the question."
+      throw new AppError(
+        "User cant answer his own question.",
+        400,
+        "AnswerQuestionService"
       );
 
     const foundUser = await this.questionsRepository.findUserAnswer(
@@ -55,8 +46,10 @@ class CreateQuestionService {
     );
 
     if (foundUser !== undefined)
-      throw new Error(
-        `AnswerQuestionService: user already answered this question. ${foundUser}`
+      throw new AppError(
+        "User already answered this question.",
+        400,
+        "AnswerQuestionService"
       );
 
     const answeredQuestion = await this.questionsRepository.answer(

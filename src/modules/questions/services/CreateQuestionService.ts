@@ -4,6 +4,8 @@ import Question from "../infra/typeorm/schemas/Question";
 import IEasyCodeProvider from "../providers/EasyCodeProvider/models/IEasyCodeProvider";
 import IQuestionsRepository from "../repositories/IQuestionsRepository";
 
+import AppError from "../../../shared/errors/AppError";
+
 interface IRequest {
   user_id?: string;
   text?: string;
@@ -52,12 +54,16 @@ class CreateQuestionService {
     //--
 
     if (!user_id)
-      throw new Error(
-        "CreateQuestionService: cant create question without user identification."
+      throw new AppError(
+        "Cant create question without user identification.",
+        400,
+        "CreateQuestionService"
       );
     if (!text)
-      throw new Error(
-        "CreateQuestionService: cant create question without a question text."
+      throw new AppError(
+        "Cant create question without a question text.",
+        400,
+        "CreateQuestionService"
       );
 
     const options = new Array<Option>();
@@ -74,7 +80,11 @@ class CreateQuestionService {
       options.push(await this.questionsRepository.createOption(option_5, 5));
 
     if (options.length < 2)
-      throw new Error("CreateQuestionService: less than 2 options");
+      throw new AppError(
+        "Cant create question with only one option.",
+        400,
+        "CreateQuestionService"
+      );
 
     const question = await this.questionsRepository.create({
       text,
