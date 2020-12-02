@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { container } from "tsyringe";
 
 import CreateQuestionService from "../../services/CreateQuestionService";
+import GetQuestionService from "../../services/GetQuestionService";
 
 export default class QuestionsController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -31,10 +32,8 @@ export default class QuestionsController {
 
   public async show(request: Request, response: Response): Promise<Response> {
     const { easy_id } = request.params;
-    return response.json({
-      status: "ok",
-      message: "question controller show",
-      content: easy_id,
-    });
+    const getQuestion = container.resolve(GetQuestionService);
+    const question = await getQuestion.execute({ easy_id });
+    return response.json(question);
   }
 }
