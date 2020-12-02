@@ -7,6 +7,8 @@ import Question from "../schemas/Question";
 import Option from "../schemas/Options";
 import Answers from "../schemas/Answers";
 
+import AppError from "../../../../../shared/errors/AppError";
+
 class QuestionsRepository implements IQuestionsRepository {
   private questionsOrmRepository: MongoRepository<Question>;
   private optionsOrmRepository: MongoRepository<Option>;
@@ -52,10 +54,7 @@ class QuestionsRepository implements IQuestionsRepository {
 
     question.options[optionIndex].answers.push(answer);
 
-    const answeredQuestion = await this.questionsOrmRepository.update(
-      question.id,
-      question
-    );
+    await this.questionsOrmRepository.update(question.id, question);
     return question;
   }
 
@@ -67,6 +66,25 @@ class QuestionsRepository implements IQuestionsRepository {
   public async findByEasyCode(easy_id: string): Promise<Question | undefined> {
     const question = await this.questionsOrmRepository.findOne({ easy_id });
     return question;
+  }
+
+  public async findUserAnswer(
+    easy_id: string,
+    user_id: string
+  ): Promise<Answers | undefined> {
+    const question = await this.questionsOrmRepository.findOne({ easy_id });
+    if (!question)
+      throw new AppError("Question not found", 404, "QuestionRepository");
+
+    let userAnswer: Answers | undefined;
+
+    question.options.forEach(opt => {
+      if (opt.answers) {
+        userAnswer = opt.answers.find(ans => ans.user_id === user_id);
+      }
+    });
+
+    return userAnswer;
   }
 }
 
