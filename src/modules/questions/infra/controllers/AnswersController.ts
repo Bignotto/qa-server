@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { container } from "tsyringe";
 
-import CreateQuestionService from "../../services/CreateQuestionService";
 import AnswerQuestionService from "../../services/AnswerQuestionService";
 
 export default class QuestionsController {
@@ -17,7 +16,5 @@ export default class QuestionsController {
     });
 
     return response.json(question);
-
-    // return response.json({ user_id, question_id, option_id });
   }
 }
