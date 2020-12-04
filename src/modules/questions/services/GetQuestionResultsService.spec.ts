@@ -3,10 +3,10 @@ import "reflect-metadata";
 import CreateQuestionService from "./CreateQuestionService";
 import AnswerQuestionService from "./AnswerQuestionService";
 import GetQuestionResultsService from "./GetQuestionResultsService";
-import GetQuestionService from "./GetQuestionService";
 
 import FakeQuestionRepository from "../repositories/fakes/FakeQuestionsRepository";
 import FakeEasyCodeProvider from "../providers/EasyCodeProvider/fakes/FakeEasyCodeProvider";
+
 import AppError from "../../../shared/errors/AppError";
 
 describe("GetQuestionResults", () => {
@@ -15,7 +15,6 @@ describe("GetQuestionResults", () => {
   let createQuestionService: CreateQuestionService;
   let answerQuestionService: AnswerQuestionService;
   let getQuestionResultsService: GetQuestionResultsService;
-  let getQuestionService: GetQuestionService;
 
   beforeEach(() => {
     fakeRepository = new FakeQuestionRepository();
@@ -27,11 +26,9 @@ describe("GetQuestionResults", () => {
     );
     answerQuestionService = new AnswerQuestionService(fakeRepository);
     getQuestionResultsService = new GetQuestionResultsService(fakeRepository);
-
-    getQuestionService = new GetQuestionService(fakeRepository);
   });
 
-  it("should be able to get a question contents", async () => {
+  it("should be able to get a question results", async () => {
     const question = await createQuestionService.execute({
       user_id: "dunha",
       text: "esta é uma pergunta teste",
@@ -42,15 +39,20 @@ describe("GetQuestionResults", () => {
       option_5: "quinta",
     });
 
-    const foundQuestion = await getQuestionService.execute({
+    await answerQuestionService.execute({
+      user_id: "big",
+      question_id: question.easy_id,
+      option_id: 4,
+    });
+
+    const results = await getQuestionResultsService.execute({
       easy_id: question.easy_id,
     });
 
-    expect(foundQuestion).toHaveProperty("easy_id");
-    expect(foundQuestion.options.length).toBe(5);
+    expect(results).toHaveProperty("results");
   });
 
-  it("should be able get option answers", async () => {
+  it("should be able to count results", async () => {
     const question = await createQuestionService.execute({
       user_id: "dunha",
       text: "esta é uma pergunta teste",
@@ -85,15 +87,16 @@ describe("GetQuestionResults", () => {
       option_id: 4,
     });
 
-    const foundQuestion = await getQuestionService.execute({
+    const results = await getQuestionResultsService.execute({
       easy_id: question.easy_id,
     });
 
-    expect(foundQuestion.options[1]).toHaveProperty("answers");
-    expect(foundQuestion.options[3]).toHaveProperty("answers");
+    expect(results).toHaveProperty("results");
+    expect(results.results[2]).toBe(2);
+    expect(results.results[4]).toBe(2);
   });
 
-  it("should not be able to get an invalid question", async () => {
+  it("should not be able to get an invalid question results", async () => {
     const question = await createQuestionService.execute({
       user_id: "dunha",
       text: "esta é uma pergunta teste",
@@ -105,7 +108,7 @@ describe("GetQuestionResults", () => {
     });
 
     await expect(
-      getQuestionService.execute({
+      getQuestionResultsService.execute({
         easy_id: "invalid easy id",
       })
     ).rejects.toBeInstanceOf(AppError);

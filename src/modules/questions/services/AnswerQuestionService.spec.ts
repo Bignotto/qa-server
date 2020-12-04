@@ -4,6 +4,8 @@ import AnswerQuestionService from "./AnswerQuestionService";
 import FakeQuestionRepository from "../repositories/fakes/FakeQuestionsRepository";
 import FakeEasyCodeProvider from "../providers/EasyCodeProvider/fakes/FakeEasyCodeProvider";
 
+import AppError from "../../../shared/errors/AppError";
+
 describe("AnswerQuestion", () => {
   let fakeRepository: FakeQuestionRepository;
   let fakeEasyCodeProvider: FakeEasyCodeProvider;
@@ -83,7 +85,7 @@ describe("AnswerQuestion", () => {
         question_id: "xxxxx",
         option_id: 4,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("should not be able to answer an expired question", async () => {
@@ -111,7 +113,7 @@ describe("AnswerQuestion", () => {
         question_id: question.easy_id,
         option_id: 4,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("a user should not be able to answer an question twice", async () => {
@@ -139,7 +141,7 @@ describe("AnswerQuestion", () => {
         question_id: question.easy_id,
         option_id: 4,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("the user who created the question cannot answer it", async () => {
@@ -159,6 +161,6 @@ describe("AnswerQuestion", () => {
         question_id: question.easy_id,
         option_id: 4,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 });

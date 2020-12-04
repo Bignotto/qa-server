@@ -50,7 +50,8 @@ class CreateQuestionService {
       } else break;
     }
 
-    if (errorCount === maxError) throw new Error("EasyCode full!");
+    if (errorCount === maxError)
+      throw new AppError("EasyCode full!", 400, "CreateQuestionService");
     //--
 
     if (!user_id)

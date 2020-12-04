@@ -3,6 +3,8 @@ import CreateQuestionService from "./CreateQuestionService";
 import FakeQuestionRepository from "../repositories/fakes/FakeQuestionsRepository";
 import FakeEasyCodeProvider from "../providers/EasyCodeProvider/fakes/FakeEasyCodeProvider";
 
+import AppError from "../../../shared/errors/AppError";
+
 describe("CreateQuestion", () => {
   let fakeRepository: FakeQuestionRepository;
   let fakeEasyCodeProvider: FakeEasyCodeProvider;
@@ -57,7 +59,7 @@ describe("CreateQuestion", () => {
         option_4: "quarta",
         option_5: "quinta",
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("should not be able to create a question with only one option", async () => {
@@ -67,7 +69,7 @@ describe("CreateQuestion", () => {
         text: "esta é uma pergunta teste",
         option_1: "primeira",
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("should not be able to create a question without user_id", async () => {
@@ -80,7 +82,7 @@ describe("CreateQuestion", () => {
         option_4: "quarta",
         option_5: "quinta",
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("should not be able to create a question without text", async () => {
@@ -93,6 +95,6 @@ describe("CreateQuestion", () => {
         option_4: "quarta",
         option_5: "quinta",
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(AppError);
   });
 });
